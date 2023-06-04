@@ -1,0 +1,102 @@
+{% extends 'layout.html' %}
+{% block head %}
+<title>pendulum PID</title>
+<style type="text/css">
+    canvas {
+        background-color: #FFF;
+        border: 1px solid#999;
+    }
+</style>
+</script>
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+
+{% endblock %}
+{% block body %}
+<div id="time">time: 0</div>
+<!-- <div id="record">record: 0</div> -->
+<div id="outer">
+    <div id="canvasContainer">
+        <canvas id="tutorial" width="800" height="480"></canvas>
+        <div id="output"></div>
+    </div>
+</div>
+<form name="myForm">
+    <input type="button" name="play" value="play" onClick="disable(1);timerID=setInterval(run,20);chg1()" />
+    <!-- <input type="button" name="play" value="play" onClick="init();disable(1);timerID=setInterval(run,20);chg1()" /> -->
+    <input type="button" name="pause" value="pause" disabled onClick="clearInterval(timerID);chg3();draw();" />
+    <input type="button" name="quit" value="quit" disabled
+        onClick="clearInterval(timerID);disable(0);chg4();draw();cart.init1();cart.drawCart(ctx)" />
+    <!-- quitを押したらグラフを表示して，最初の表示に戻す-->
+    <!-- startを押したらhtmlの変数をloadしてrunする -->
+    <!-- 一番初めの時と，quitを押したときだけhtmlの入力を有効にする -->
+    <!-- chg4();init()とするとinit()の中にch3が含まれてしまっているのでダメ -->
+
+</form>
+<form name="ele">
+    <p>
+        <label for="action0">PDI制御</label><input type="radio" name="action" id="action0" checked>
+        <label for="action1">手動</label><input type="radio" name="action" id="action1">
+    </p>
+    <p><label for="scale">縮尺[%]</label>
+        <input id='scale' type="text" value="100">
+    </p>
+    <p><label for="g">重力加速度[m/s²]</label>
+        <input id='g' type="text" value="9.8">
+    </p>
+    <p><label for="M">台車質量[kg]</label>
+        <input id='M' type="text" value="1">
+    </p>
+    <p>
+    <label for="m">棒の質量[kg]</label>
+        <input id='m' type="text" value="1">
+    
+    <label for="l">棒の長さ[m]</label>
+        <input id='l' type="text" value="0.8">
+    </p>
+    <p>摩擦係数:
+    <label for="uz">台車の滑り摩擦係数</label>
+        <input id='uz' type="text" value="0.04">
+    
+    <label for="uth">振り子の回転摩擦係数</label>
+        <input id='uth' type="text" value="0.05">
+    </p>
+    <p>初期位置:
+        <label for="x0">x0[m]</label>
+        <input id='x0' type="text" value="0">
+        <label for="th0">θ0[rad]</label>
+        <input id='th0' type="text" value="0.01">
+    </p>
+    <p>※角度は振子が完全に倒立した状態を0°とし，時計回り方向を正としている</p>
+    <p><label for="input1">ゲイン:</label>
+        <input id='K1' type="text" value="12">
+        <input id='K2' type="text" value="20">
+        <input id='K3' type="text" value="180">
+        <input id='K4' type="text" value="70">
+    </p>
+    <p>※左から順にx，dx，θ，dθに対するゲイン</p>
+    <p>矢印キーを1回押したとき:
+    <label for="fup">振子への力[N]</label>
+    <input id='fup' type="text" value="1">
+    <label for="fdown">台車への力[N]</label>
+    <input id='fdown' type="text" value="1">
+    </p>
+</form>
+<p>※振子への力は，振子に対して直角に働き，時計回り方向を正としている</p>
+<!-- あとはバネダンパの係数の入力が必要 -->
+<!-- あと初期値も必要 -->
+
+<img id="image">
+<!-- <input type="file" name="image" accept="image/png" hidden> -->
+
+<div class="canvas-container" style="position:absolute; top:1100px; left:10px; width:400px; height:240px;">
+<!-- <div class="canvas-container"> -->
+    <canvas id="canvas_1" display="none" width="40" height="24"></canvas>
+    <canvas id="canvas_2" display="none" width="40" height="24"></canvas>
+    <canvas id="canvas_3" display="none" width="40" height="24"></canvas>
+    <canvas id="canvas_4" display="none" width="40" height="24"></canvas>
+    <canvas id="canvas_5" display="none" width="40" height="24"></canvas>
+</div>
+<script type="text/javascript" src="{{ url_for('pid.static', filename='apparatus.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('pid.static', filename='run.js') }}"></script>
+{% endblock %}
